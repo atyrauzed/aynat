@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аянат — Репетитор по казахскому языку</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Geologica:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --surface: #1c2128;
+  --border: #30363d;
+  --border2: #484f58;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #6e7681;
+  --accent: #58a6ff;
+  --accent2: #1f6feb;
+  --green: #3fb950;
+  --green-bg: #0d2818;
+  --amber: #d29922;
+  --amber-bg: #2a1f0a;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --purple-bg: #1d1231;
+  --teal: #39d353;
+  --phase1: #1565c0;
+  --phase2: #6a1b9a;
+  --phase3: #1b5e20;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geologica', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ───── SCREENS ───── */
+.screen { display: none; flex-direction: column; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ───── SETUP SCREEN ───── */
+#setup {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg);
+}
+.setup-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+}
+.logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.setup-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+.setup-subtitle {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+.field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.api-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'Geologica', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 6px;
+}
+.api-input:focus { border-color: var(--accent2); }
+.api-hint {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.api-hint a { color: var(--accent); text-decoration: none; }
+.btn-primary {
+  width: 100%;
+  background: var(--accent2);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 13px 20px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-primary:hover { background: #388bfd; }
+.btn-primary:active { transform: scale(0.98); }
+.setup-features {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.feat {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  line-height: 1.5;
+}
+.feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 5px; }
+
+/* ───── MAIN APP ───── */
+#app { flex-direction: row; }
+
+/* ───── SIDEBAR ───── */
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+}
+.sidebar-header {
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.sidebar-name {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.sidebar-subtitle { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* progress bar */
+.progress-wrap { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.progress-bar { height: 6px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--green)); border-radius: 99px; transition: width 0.4s ease; }
+.days-done-label { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+/* day list */
+.day-list { flex: 1; overflow-y: auto; padding: 0.75rem 0; }
+.day-list::-webkit-scrollbar { width: 4px; }
+.day-list::-webkit-scrollbar-track { background: transparent; }
+.day-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.phase-header {
+  padding: 8px 1.25rem 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.day-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 0;
+}
+.day-item:hover { background: var(--bg3); }
+.day-item.active { background: var(--bg3); border-left: 2px solid var(--accent); }
+.day-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.day-item.done .day-num { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.day-item.active .day-num { background: var(--accent2); border-color: var(--accent2); color: white; }
+.day-info { flex: 1; min-width: 0; }
+.day-title { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day-type { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.day-check { width: 14px; height: 14px; border-radius: 50%; background: var(--green); flex-shrink: 0; display: none; align-items: center; justify-content: center; }
+.day-item.done .day-check { display: flex; }
+.day-check::after { content: '✓'; font-size: 9px; color: white; }
+
+/* ───── MAIN CONTENT ───── */
+.main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+
+/* day header */
+.day-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+.day-header-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 8px; }
+.day-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+}
+.badge-phase1 { background: #1565c020; color: #90caf9; border: 1px solid #1565c060; }
+.badge-phase2 { background: #6a1b9a20; color: #ce93d8; border: 1px solid #6a1b9a60; }
+.badge-phase3 { background: #1b5e2020; color: #a5d6a7; border: 1px solid #1b5e2060; }
+.day-header-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
+}
+.btn-complete {
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-family: 'Geologica', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.btn-complete:hover { background: var(--green-bg); }
+.btn-complete.done { background: var(--green-bg); border-color: var(--green); }
+
+.day-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+.meta-tag {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.meta-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+/* ───── CHAT ───── */
+.chat-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.msg { display: flex; gap: 10px; align-items: flex-start; max-width: 100%; }
+.msg.user { flex-direction: row-reverse; }
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.msg.ai .msg-avatar { background: var(--accent2); color: white; }
+.msg.user .msg-avatar { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple); font-size: 11px; }
+.msg-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  word-break: break-word;
+}
+.msg.ai .msg-bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+  color: var(--text);
+}
+.msg.user .msg-bubble {
+  background: var(--accent2);
+  color: white;
+  border-top-right-radius: 4px;
+}
+.msg-bubble p { margin-bottom: 6px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble strong { font-weight: 500; color: var(--amber); }
+.msg.user .msg-bubble strong { color: rgba(255,255,255,0.9); }
+.msg-bubble em { color: var(--green); font-style: normal; font-weight: 500; }
+.msg-bubble code {
+  background: var(--bg3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--teal);
+}
+.msg-bubble ul { margin: 6px 0 6px 16px; }
+.msg-bubble li { margin-bottom: 4px; }
+.msg-bubble .kaz-word {
+  background: var(--amber-bg);
+  color: var(--amber);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* typing indicator */
+.typing-indicator { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text3);
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* chat input */
+.chat-input-wrap {
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+}
+.chat-input-row:focus-within { border-color: var(--accent2); }
+.chat-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Geologica', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  min-height: 22px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.chat-textarea::placeholder { color: var(--text3); }
+.btn-send {
+  background: var(--accent2);
+  border: none;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.btn-send:hover { background: #388bfd; }
+.btn-send svg { width: 16px; height: 16px; fill: white; }
+
+/* quick replies */
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.qr-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: 'Geologica', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.qr-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.07); }
+
+/* score display */
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 4px 0 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+}
+.score-item { text-align: center; }
+.score-num { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 600; color: var(--green); }
+.score-label { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* mobile toggle */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent2);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+@media (max-width: 768px) {
+  #app { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main { height: 100vh; }
+  .mobile-menu-btn { display: flex; }
+  .day-header-title { font-size: 14px; }
+}
+
+/* fade-in for messages */
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.msg { animation: msgIn 0.25s ease forwards; }
+
+.error-msg { color: var(--red); font-size: 13px; text-align: center; padding: 8px; }
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div class="screen active" id="setup">
+  <div class="setup-card">
+    <div class="logo">Казахский язык · 7 сынып</div>
+    <h1 class="setup-title">Привет, Аянат! 👋<br>Твой репетитор готов</h1>
+    <p class="setup-subtitle">18-дневная программа подготовки к СОЧ по всем темам. ИИ объясняет по-русски, тренирует казахский.</p>
+    <div class="field-label">API-ключ Google Gemini</div>
+    <input class="api-input" type="password" id="apiKeyInput" placeholder="AIza..." />
+    <p class="api-hint">Получи бесплатно на <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a> → Get API key. Карта не нужна. Ключ хранится только в браузере.</p>
+    <button class="btn-primary" onclick="startApp()">Начать подготовку →</button>
+    <div class="setup-features">
+      <div class="feat"><div class="feat-dot"></div>18-дневный план по СОР/СОЧ</div>
+      <div class="feat"><div class="feat-dot"></div>Все темы 7 класса</div>
+      <div class="feat"><div class="feat-dot"></div>ИИ объясняет по-русски</div>
+      <div class="feat"><div class="feat-dot"></div>Трекер прогресса</div>
+      <div class="feat"><div class="feat-dot"></div>Задания как на экзамене</div>
+      <div class="feat"><div class="feat-dot"></div>Без лимитов и рекламы</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="screen" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">Казахский · 7 сынып</div>
+      <div class="sidebar-name">Аянат</div>
+      <div class="sidebar-subtitle">Подготовка к СОЧ · 18 дней</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Прогресс</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="days-done-label" id="daysDoneLabel">0 из 18 дней выполнено</div>
+    </div>
+    <div class="day-list" id="dayList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="day-header">
+      <div class="day-header-top">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+          <span class="day-badge" id="dayBadge"></span>
+          <h2 class="day-header-title" id="dayTitle"></h2>
+        </div>
+        <button class="btn-complete" id="completeBtn" onclick="toggleDone()">✓ Готово</button>
+      </div>
+      <div class="day-meta" id="dayMeta"></div>
+    </div>
+
+    <div class="chat-wrap">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-wrap">
+        <div class="quick-replies" id="quickReplies"></div>
+        <div class="chat-input-row">
+          <textarea class="chat-textarea" id="chatInput" placeholder="Напиши свой ответ или вопрос..." rows="1"></textarea>
+          <button class="btn-send" onclick="sendMessage()" aria-label="Отправить">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+</div>
+
+<script>
+const PLAN = [
+  // PHASE 1: СЛОВАРНЫЙ ЗАПАС + ТЕМЫ (дни 1-6)
+  {
+    day: 1, phase: 1,
+    title: "Три языка — большое искусство",
+    topic: "Үш тілді білу – үлкен өнер",
+    type: "Лексика + Тыңдалым",
+    time: 20,
+    color: "phase1",
+    goals: ["Ключевые слова темы", "Понимание главной мысли текста", "Определение типа текста"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Дай мне новые слова", "Объясни тему"],
+    systemPrompt: `Ты ИИ-репетитор по казахскому языку для ученицы 7 класса по имени Аянат. Она русскоязычная, казахский язык для неё второй язык. Говори с ней по-русски, тепло и поддерживающе. Сегодня День 1: тема «Үш тілді білу – үлкен өнер» (Три языка — большое искусство). 
+    
+Это тема из СОЧ (суммативного оценивания за четверть) по казахскому языку 7 класса.
+
+ЦЕЛИ УРОКА:
+- Выучить ключевые слова по теме
+- Научиться определять главную мысль текста (мәтіннің негізгі идеясы)
+- Понять тип текста (мәтіннің түрі: хабарлама/сипаттама/пайымдама)
+
+КЛЮЧЕВЫЕ СЛОВА для изучения (давай по 5-7 слов, с переводом и примером):
+- тіл (язык), ана тілі (родной язык), мемлекеттік тіл (государственный язык)
+- үш тілді білу (знать три языка), полиглот, неологизм, термин
+- мақал-мәтел (пословица/поговорка)
+- Өнер алды – қызыл тіл (Искусство начинается с красноречия)
+- Көп сөз – күміс, аз сөз – алтын (Много слов — серебро, мало слов — золото)
+
+Начни приветствием, затем спроси готова ли Аянат к уроку. После её ответа — начни с 5 ключевых слов, казахское слово выдели в формате **слово** и переведи. Потом мини-текст для чтения (3-4 предложения) и вопрос к нему. Будь ободряющей, хвали за любой правильный ответ.`
+  },
+  {
+    day: 2, phase: 1,
+    title: "Время — великая сила",
+    topic: "Уақыт – ұлы күш",
+    type: "Оқылым + Лексика",
+    time: 20,
+    color: "phase1",
+    goals: ["Слова по теме времени и хобби", "Чтение и понимание текста", "Схемы и диаграммы"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Покажи новые слова", "Дай текст для чтения"],
+    systemPrompt: `Ты ИИ-репетитор по казахскому языку для Аянат, ученицы 7 класса. Говори по-русски, тепло. День 2: тема «Уақыт – ұлы күш» (Время — великая сила) + «Бос уақыт» (Свободное время).
+
+КЛЮЧЕВЫЕ СЛОВА (хобби и время):
+- уақыт (время), бос уақыт (свободное время)
+- қолөнер (рукоделие), тоқыма тоқу (вязание), сурет салу (рисование)
+- гүл өсіру (выращивать цветы), коллекция жинау (собирать коллекцию)
+- спортпен шұғылдану (заниматься спортом), блог жүргізу (вести блог)
+- ермек іс / хобби (хобби)
+
+ЗАДАНИЕ из СОЧ — чтение текста и работа со схемой:
+Дай Аянат короткий текст о хобби (3-4 предложения на казахском), потом попроси: назвать главную мысль, соединить хобби с пользой (схема). Хвали за каждый ответ. Объясняй незнакомые слова сразу.`
+  },
+  {
+    day: 3, phase: 1,
+    title: "Жантаза — знакомство с героем",
+    topic: "Бегабат Ұзақов «Жантаза»",
+    type: "Оқылым (литература)",
+    time: 25,
+    color: "phase1",
+    goals: ["Познакомиться с произведением", "Внешность героя (сыртқы келбет)", "Новые слова из текста"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Расскажи про Жантазу", "Дай слова из рассказа"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс казахский язык. День 3: рассказ Бегабата Ұзақова «Жантаза».
+
+КРАТКОЕ СОДЕРЖАНИЕ для репетитора:
+Жантаза — молодой батыр (герой), среднего роста, крепкий, с густыми бровями, смуглый. Ему нет ещё 20 лет. Он едет на рыжем коне по степи Кызылкум, вооружён. Думает о жизни, о том, что она непостоянна. С 14 лет он стал вождём, воевал против врагов с юга. Объединял разрозненный народ, учил его земледелию.
+
+ЗАДАНИЕ из СОЧ (3-4 тапсырма):
+1. Найти авторскую характеристику героя (автор мінездемесі)
+2. Описать внешность (сыртқы келбет)
+3. Описать характер и поступки (мінез, іс-әрекет)
+4. Заполнить таблицу (имя / возраст+внешность / характер / поступки)
+
+КЛЮЧЕВЫЕ СЛОВА:
+- орта бойлы (среднего роста), төртбақ денелі (коренастый), қалың қабақты (с густыми бровями), қарасұр (смуглый)
+- жігіт (парень/молодой мужчина), батыр (герой/богатырь)
+- мінез (характер), іс-әрекет (действие, поступок), сыртқы келбет (внешность)
+
+Начни с краткого пересказа по-русски, потом дай 5 слов, потом задание. Будь терпелива.`
+  },
+  {
+    day: 4, phase: 1,
+    title: "Великий Шёлковый путь",
+    topic: "Ұлы Жібек жолы",
+    type: "Тыңдалым + Айтылым",
+    time: 20,
+    color: "phase1",
+    goals: ["Слова по истории и географии", "Формула ПОПС (своё мнение)", "Исторические города Казахстана"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Что такое ПОПС?", "Назови слова по теме"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 4: тема «Ұлы Жібек жолы» (Великий Шёлковый путь).
+
+КЛЮЧЕВЫЕ СЛОВА:
+- Ұлы Жібек жолы (Великий Шёлковый путь), сауда (торговля), керуен (карavan)
+- Сауран, Түркістан, Отырар, Тараз, Сайрам — исторические города
+- асыл тастар (драгоценные камни), базар, жәрмеңке (ярмарка)
+- мешіт (мечеть), кесене (мавзолей), керуен сарай (caravanserai)
+
+ФОРМУЛА ПОПС (учим строить мнение):
+- Менің ойымша... (По-моему...)
+- Себебі... (Потому что...)
+- Мен мынамен дәлелдеймін... (Я докажу тем, что...)
+- Осыған байланысты... (В связи с этим...)
+
+ЗАДАНИЕ: Дай Аянат текст про Шёлковый путь (4-5 предложений), спроси её мнение по формуле ПОПС. Помогай строить фразы на казахском. Хвали за попытки.`
+  },
+  {
+    day: 5, phase: 1,
+    title: "Спорт и здоровье",
+    topic: "Спорт және денсаулық күтімі",
+    type: "Оқылым + Лексика",
+    time: 20,
+    color: "phase1",
+    goals: ["Слова о спорте и здоровье", "Работа с диаграммой", "Составить рассказ по данным"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Дай слова о спорте", "Как работать с диаграммой?"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 5: «Спорт және денсаулық күтімі» (Спорт и здоровье).
+
+КЛЮЧЕВЫЕ СЛОВА:
+- спорт алаңы (спортплощадка), бассейн, стадион, боксзал, теннис корты
+- денсаулық (здоровье), жаттығу (тренировка), нәтиже (результат)
+- фитнес, йога, аэробика, бадминтон, волейбол, баскетбол
+
+ЗАДАНИЕ из СОЧ: работа с диаграммой.
+Объясни Аянат: когда в задании дают диаграмму, нужно:
+1. Прочитать что показано (ажырату)
+2. Использовать данные в рассказе (қолдану)
+3. Составить предложения с цифрами: «66% оқушылар бассейн жақсы көреді»
+
+Дай ей мини-диаграмму (в тексте): «66% — бассейн, 47% — теннис, 36% — стадион, 33% — боксзал».
+Попроси составить 3 предложения по данным. Исправляй мягко.`
+  },
+  {
+    day: 6, phase: 1,
+    title: "Мода и стиль · Повторение лексики",
+    topic: "Ұқсатым. Сән. Талғам",
+    type: "Лексика + мини-тест",
+    time: 20,
+    color: "phase1",
+    goals: ["Слова о моде", "Повторить все темы фазы 1", "Мини-тест на 10 слов"],
+    grammar: null,
+    quickReplies: ["Начни урок", "Проверь мои знания слов", "Повтори все темы"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 6: тема «Ұқсатым. Сән. Талғам» (Стиль. Мода. Вкус) + повторение всей лексики фазы 1.
+
+СЛОВА по теме моды:
+- сән (мода), талғам (вкус, стиль), ұқсатым (подражание/стиль)
+- киім (одежда), кербез (элегантный), сұлу (красивый)
+- киім кешек (одежда/гардероб), безендіру (украшать)
+
+Проведи мини-тест: 10 слов из прошлых 5 дней (перемешай темы). Формат: «Что значит слово "уақыт"?» или «Как по-казахски "здоровье"?». Считай правильные ответы из 10. Если меньше 7 — предложи повторить слабые места.
+
+После теста — дай новые слова о моде (5 слов). Заверши день мотивирующей фразой — сегодня Аянат завершила Фазу 1!`
+  },
+
+  // PHASE 2: ГРАММАТИКА (дни 7-13)
+  {
+    day: 7, phase: 2,
+    title: "Степени сравнения прилагательных",
+    topic: "Шырай түрлері",
+    type: "Тілдік білім (грамматика)",
+    time: 25,
+    color: "phase2",
+    goals: ["Салыстырмалы шырай (сравнительная)", "Күшейтпелі шырай (усилительная)", "Асырмалы шырай (превосходная)"],
+    grammar: "Шырай түрлері",
+    quickReplies: ["Объясни степени сравнения", "Дай примеры", "Проверь меня"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 7: грамматика — шырай түрлері (степени сравнения прилагательных).
+
+ОБЪЯСНЕНИЕ (по-русски, просто):
+В казахском языке 3 степени сравнения:
+
+1. САЛЫСТЫРМАЛЫ ШЫРАЙ (сравнительная) — суффиксы: -рақ/-рек, -лау/-леу
+   Пример: үлкен → үлкенірек (больше), кішкентай → кішкентайлау (поменьше)
+
+2. КҮШЕЙТПЕЛІ ШЫРАЙ (усилительная) — приставки: өте, тым, аса, ең, нағыз
+   Пример: өте үлкен (очень большой), тым кішкентай (слишком маленький)
+
+3. АСЫРМАЛЫ ШЫРАЙ (превосходная) — приставки: ең + прилагательное
+   Пример: ең үлкен (самый большой), ең кішкентай (самый маленький)
+
+УПРАЖНЕНИЯ:
+1. Образуй формы от слов: жақсы (хороший), биік (высокий), ауыр (тяжёлый)
+2. Переведи на казахский: «самый красивый», «очень интересный», «поменьше»
+3. Составь 2 предложения используя шырай
+
+Объясни правило по-русски с таблицей, потом дай упражнения. Будь терпеливой.`
+  },
+  {
+    day: 8, phase: 2,
+    title: "Сложные слова",
+    topic: "Күрделі сөздер",
+    type: "Тілдік білім (орфография)",
+    time: 25,
+    color: "phase2",
+    goals: ["Виды сложных слов", "Слитное и раздельное написание", "Аббревиатуры (қысқарған сөздер)"],
+    grammar: "Күрделі сөздер",
+    quickReplies: ["Объясни сложные слова", "Дай упражнение", "Проверь правописание"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 8: Күрделі сөздер (сложные слова).
+
+ОБЪЯСНЕНИЕ (по-русски):
+В казахском 4 типа сложных слов:
+
+1. СӨЗ ТІРКЕСІ (словосочетание) — пишутся раздельно: ана тілі, бос уақыт, орта мектеп
+2. ҚОС СӨЗДЕР (парные слова) — пишутся через дефис: ауыл-аймақ, бел-беу, ұл-қыз
+3. БІРІККЕН СӨЗДЕР (слитные) — пишутся слитно: қолөнер, таңертең, бүгін, қараторы
+4. ҚЫСҚАРҒАН СӨЗДЕР (аббревиатуры) — ҚазМҰУ, АҚШ, ТМД, см, км
+
+УПРАЖНЕНИЕ из СОЧ:
+Раздели слова по группам: кербез сұлу / ағайын туысқан / бүгін / ТМД / қараторы / ұл қыз / бел-беу / киім кешек / см / таң ертең / ҚазМҰУ / пед-колледж / қолөнер / білезік / ауыл-аймақ
+
+Дай объяснение с примерами, потом дай это упражнение. После ответа Аянат — проверь и объясни ошибки.`
+  },
+  {
+    day: 9, phase: 2,
+    title: "Обособленные слова и знаки препинания",
+    topic: "Оқшау сөздер",
+    type: "Тілдік білім (пунктуация)",
+    time: 25,
+    color: "phase2",
+    goals: ["Обращения (қаратпа сөз)", "Вводные слова (кіріспе сөз)", "Восклицания (одағай)", "Знаки препинания"],
+    grammar: "Оқшау сөздер",
+    quickReplies: ["Объясни оқшау сөздер", "Дай предложения для знаков", "Проверь меня"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 9: Оқшау сөздер (обособленные слова) и знаки препинания.
+
+ОБЪЯСНЕНИЕ (по-русски):
+Оқшау сөздер — слова, которые выделяются запятыми:
+
+1. ҚАРАТПА СӨЗ (обращение): «Тыңдаш, Жамбыл!» — выделяется запятой
+2. КІРІСПЕ СӨЗ (вводное слово): «Менің ойымша, бұл дұрыс» — выделяется запятой
+3. ОДАҒАЙ (восклицание/междометие): «Алақай!», «Пай-пай!», «Ой!» — восклицательный знак или запятая
+
+УПРАЖНЕНИЕ из СОЧ — расставь знаки препинания:
+1. Негізінде жағдайымыз оншама жақсы емес (вводное слово)
+2. Тыңда Жамбылды (обращение)
+3. Алақай келгенің жақсы болды (восклицание)
+4. Пай-пай Нұржан-ай тіліңіз қандай ащы (восклицание + обращение)
+5. Менің ойымша бұл дұрыс шешім (вводное слово)
+
+Объясни правило с таблицей, потом дай упражнение. Проверь ответы Аянат.`
+  },
+  {
+    day: 10, phase: 2,
+    title: "Времена глагола",
+    topic: "Етістіктің шақтары",
+    time: 25,
+    color: "phase2",
+    type: "Тілдік білім (грамматика)",
+    goals: ["Прошедшее время (өткен шақ)", "Настоящее (осы шақ)", "Будущее время (келер шақ)", "Желательное наклонение (қалау рай)"],
+    grammar: "Етістіктің шақтары",
+    quickReplies: ["Объясни времена глагола", "Дай спряжение", "Проверь меня"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 10: Времена глагола казахского языка.
+
+ОБЪЯСНЕНИЕ (по-русски, с таблицами):
+
+ӨТКЕН ШАҚ (прошедшее):
+- Бұрынғы өткен шақ (давнопрошедшее): -ған/-ген, -қан/-кен → барған (ходил), келген (пришёл)
+- Ауыспалы өткен шақ (недавнее): -ды/-ді, -ты/-ті → барды (пошёл), келді (пришёл)
+
+ОСЫOZМЕЗГІЛДЕГІ ШАҚ (настоящее): -ып/-іп/-п + жатыр/отыр/тұр/жүр → барып жатыр (идёт)
+
+КЕЛЕР ШАҚ (будущее):
+- Мақсатты келер шақ (намерение): -мақ/-мек → бармақ (собирается идти)
+- Болжалды келер шақ (предположение): -ар/-ер/-р → барар (наверное пойдёт)
+
+ҚАЛАУ РАЙ (желательное): -ғай/-гей, -қай/-кей или «-са/-се екен» → барғай (хотел бы пойти), барса екен (если бы пошёл)
+
+УПРАЖНЕНИЕ: Спряги глагол «бару» (идти) во всех временах для местоимений мен/сен/ол. Потом составь 3 предложения с разными временами на тему «Жантаза».`
+  },
+  {
+    day: 11, phase: 2,
+    title: "Сложносочинённые предложения",
+    topic: "Салалас құрмалас сөйлем",
+    time: 25,
+    color: "phase2",
+    type: "Тілдік білім + Жазылым",
+    goals: ["Ыңғайлас (соединительные)", "Қарсылықты (противительные)", "Түсіндірмелі (пояснительные)", "Эссе с их использованием"],
+    grammar: "Салалас құрмалас сөйлем",
+    quickReplies: ["Объясни типы предложений", "Дай примеры", "Помоги с эссе"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 11: Салалас құрмалас сөйлемдер (сложносочинённые предложения).
+
+ОБЪЯСНЕНИЕ (по-русски):
+3 вида салалас (сочинительных) сложных предложений:
+
+1. ЫҢҒАЙЛАС (соединительные): союзы және/да/де/та/те/жәнеде — «и», «а также»
+   Пример: Дала желдіреді, жаңбыр да жауып тұр. (Дует ветер, и дождь идёт)
+
+2. ҚАРСЫЛЫҚТЫ (противительные): союзы бірақ/алайда/дегенмен — «но», «однако»
+   Пример: Ән басылды, бірақ гитара тоқтаған жоқ. (Песня кончилась, но гитара не умолкла)
+
+3. ТҮСІНДІРМЕЛІ (пояснительные): союзы өйткені/себебі/сондықтан — «потому что», «поэтому»
+   Пример: Сабақ ұнады, өйткені ұстаз жақсы түсіндірді. (Урок понравился, потому что учитель хорошо объяснил)
+
+ЗАДАНИЕ из СОЧ: составь эссе «Қазіргі сән туралы менің ойым» (Моё мнение о современной моде) — 5-7 предложений, используя все 3 типа. Помоги ей составить план, потом проверь готовое.`
+  },
+  {
+    day: 12, phase: 2,
+    title: "Послелоги (шылаулар)",
+    topic: "Септеулік шылаулар",
+    time: 25,
+    color: "phase2",
+    type: "Тілдік білім",
+    goals: ["Послелоги с именительным падежом", "Послелоги с другими падежами", "Предложения с послелогами"],
+    grammar: "Септеулік шылаулар",
+    quickReplies: ["Объясни послелоги", "Дай таблицу", "Проверь упражнение"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 12: Септеулік шылаулар (послелоги).
+
+ОБЪЯСНЕНИЕ (по-русски):
+Послелоги в казахском стоят ПОСЛЕ слова (как предлоги в русском, но после). Управляют разными падежами:
+
+АТАУ СЕПТІКПЕН (с именительным): туралы (о/про), үшін (для/ради), сияқты/сықылды (как/словно), арқылы (через/посредством)
+Пример: мектеп туралы (о школе), дос үшін (для друга)
+
+БАРЫС СЕПТІКПЕН (с дательным -ға/-ге): дейін (до), қарай (к/по направлению к), қарсы (против), байланысты (в связи с)
+Пример: мектепке дейін (до школы), үйге қарай (к дому)
+
+ШЫҒЫС СЕПТІКПЕН (с исходным -дан/-ден): кейін (после), бері (начиная с/с тех пор), басқа (кроме), өзге (помимо)
+Пример: сабақтан кейін (после урока), бүгіннен бері (начиная с сегодня)
+
+УПРАЖНЕНИЕ: Составь 6 предложений (по 2 на каждый вид). Тема — «Ғылым мен техника» (Наука и техника). Проверь ответы.`
+  },
+  {
+    day: 13, phase: 2,
+    title: "Метафора и сравнение в тексте",
+    topic: "Теңеу мен метафора",
+    time: 25,
+    color: "phase2",
+    type: "Жазылым + Тілдік білім",
+    goals: ["Что такое теңеу (сравнение)", "Что такое метафора", "Написать текст с ними"],
+    grammar: "Теңеу мен метафора",
+    quickReplies: ["Объясни теңеу", "Дай примеры метафор", "Помоги с текстом"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 13: Теңеу мен метафора (сравнение и метафора).
+
+ОБЪЯСНЕНИЕ (по-русски):
+ТЕҢЕУ (сравнение) — сравнивает явления с помощью союзов:
+сияқты/тәрізді (как/словно): «Жүрек жолбарыс сияқты соғады» (Сердце бьётся как тигр)
+-дай/-дей (как): «ақ қар сияқты» (белый как снег)
+
+МЕТАФОРА — скрытое сравнение без союза:
+«Ғұмыр қамшының сабындай қысқа» (Жизнь коротка как рукоятка плети) — уже метафора
+
+Примеры из «Жантаза»:
+- «Тіршілік неткен тұрлаусыз еді!» — метафора (непостоянство жизни)
+- «кеудеде жолбарыс жүрек соғып тұрған» — метафора (тигриное сердце)
+
+ЗАДАНИЕ из СОЧ: Напиши 5-6 предложений о Наурыз мейрамы или о домбре, используя минимум 2 теңеу и 1 метафору. Помоги структурировать, проверь результат.`
+  },
+
+  // PHASE 3: ПРАКТИКА ЭКЗАМЕНА (дни 14-18)
+  {
+    day: 14, phase: 3,
+    title: "Интернет и молодёжь · Полный разбор",
+    topic: "Ғаламтор мен жастар",
+    type: "Комплексное задание",
+    time: 30,
+    color: "phase3",
+    goals: ["Текст + понимание + своё мнение", "Работа с диаграммой/таблицей", "Высказывание по вопросам"],
+    grammar: null,
+    quickReplies: ["Начни разбор темы", "Дай задание как на экзамене", "Проверь мой ответ"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 14: тема «Ғаламтор мен жастар» (Интернет и молодёжь) — комплексное занятие как на СОЧ.
+
+ЗАДАНИЕ ТИПА СОЧ (имитация экзамена):
+
+Тыңдалым/Оқылым: Дай текст (5-6 предложений про интернет и молодёжь). Попроси:
+1. О чём текст? (мәтін нетуралы)
+2. Какова главная идея? (негізгі идея)
+3. Найди факты и мнения
+
+Айтылым: задай 3 вопроса по теме:
+- Ғаламтордың пайдасы мен зияны: қайсысы көптеу?
+- Жастардың арасында ғаламторға тәуелділік бар ма?
+- Ғаламтор мәдениетін білеміз бе?
+
+Попроси ответить на казахском (хотя бы 2-3 предложения). Помогай строить фразы. Ставь баллы как учитель (по дескрипторам из СОЧ). Будь мягкой и ободряющей.`
+  },
+  {
+    day: 15, phase: 3,
+    title: "Наука и техника · Два текста",
+    topic: "Ғылым мен техника · Батыр туса – ел ырысы",
+    type: "Комплексное задание",
+    time: 30,
+    color: "phase3",
+    goals: ["Сравнение двух текстов", "Найти сходства и различия", "Целевая аудитория текстов", "Послелоги в заданиях"],
+    grammar: "Повторение: септеулік шылаулар",
+    quickReplies: ["Дай два текста", "Как сравнивать тексты?", "Проверь мой анализ"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 15: «Ғылым мен техника» (Наука и техника) — сравнение двух текстов.
+
+ЗАДАНИЕ (имитация СОЧ):
+Дай два коротких текста (по 4-5 предложений):
+Текст 1: о беспилотных автомобилях Google
+Текст 2: о технологии управления мозгом Samsung
+
+Попроси заполнить сравнительную таблицу:
+- Ұқсастығы (сходство)
+- Айырмашылығы (различие)
+- Негізгі идеясы (основная идея)
+- Мақсатты аудиториясы (целевая аудитория — кому предназначен)
+
+Потом — 4 предложения с послелогами на тему этих текстов.
+
+Веди как учитель на экзамене. После каждого ответа — краткий разбор, 1-2 предложения. Считай баллы (максимум 10 по дескрипторам СОЧ).`
+  },
+  {
+    day: 16, phase: 3,
+    title: "Симуляция СОЧ — Вариант 1",
+    topic: "Тыңдалым + Оқылым + Жазылым",
+    type: "Полный экзамен (20 мин)",
+    time: 35,
+    color: "phase3",
+    goals: ["Тыңдалым: текст про языки", "Оқылым: «Жантаза»", "Жазылым: эссе"],
+    grammar: null,
+    quickReplies: ["Начать экзамен", "Я готова!", "Сначала объясни формат"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 16: СИМУЛЯЦИЯ экзамена СОЧ, Вариант 1.
+
+Скажи Аянат: «Сейчас мы проведём пробный экзамен. 3 блока, как в настоящем СОЧ. Я буду проверять ответы по критериям оценивания и ставить баллы. Не переживай — это учебный режим, я помогу после каждого блока.»
+
+БЛОК 1 — ТЫҢДАЛЫМ (4 балла):
+Текст «Үш тіл – заман талабы» (3-4 предложения на казахском):
+«22 қыркүйек - ҚР халықтарының тілдері мерекесі. Біздің еліміз – көп ұлтты мемлекет. Тіл қай ұлтта болса да қастерлі. Өзінің тілін ана тілі деп атайтын жалғыз халық – қазақтар.»
+Задания: 1) О чём текст? 2) Главная идея? 3) Тип текста? 4) Верно/неверно (2 утверждения)
+
+БЛОК 2 — ОҚЫЛЫМ (4 балла):
+Отрывок из «Жантаза»:
+«Екі күннен бері орта бойлы, төртбақ денелі, қалың қабақты жігіт торы атпен келеді. Жасы жиырмаға тола қоймаған. Болатын бала он төртінде бас болды.»
+Задания: 1) Найди авторскую характеристику 2) Опиши внешность 3) Заполни таблицу (имя/внешность/характер/поступки)
+
+БЛОК 3 — ЖАЗЫЛЫМ (8 баллов):
+Тема эссе: «Мен үш тіл үйренгім келеді» (Я хочу выучить три языка).
+Требования: 5-7 предложений, использовать мақал-мәтел, термин или неологизм, формулу ПОПС.
+
+После каждого блока — ставь баллы и кратко объясняй. В конце — итоговый балл из 16 и краткий разбор ошибок.`
+  },
+  {
+    day: 17, phase: 3,
+    title: "Симуляция СОЧ — Вариант 2",
+    topic: "Спорт + Ғаламтор + Шырай",
+    type: "Полный экзамен (20 мин)",
+    time: 35,
+    color: "phase3",
+    goals: ["Диаграмма → рассказ", "Сложные слова и оқшау сөздер", "Эссе о моде с салалас"],
+    grammar: null,
+    quickReplies: ["Начать экзамен вариант 2", "Я готова!", "Напомни правила"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 17: СИМУЛЯЦИЯ СОЧ, Вариант 2.
+
+Скажи: «Пробный экзамен номер 2. Сегодня другие темы. Режим — как на настоящем СОЧ. После каждого блока я дам баллы и объясню ошибки.»
+
+БЛОК 1 — ОҚЫЛЫМ/ДИАГРАММА (4 балла):
+Дай данные: «Рядом с домом: бассейн — 66%, теннис — 47%, стадион — 36%, боксзал — 33%, хоккей — 30%, тренажёр — 17%»
+Задание: составь рассказ из 4-5 предложений, используя данные диаграммы.
+Критерий: ажырату (понял данные) + қолдану (использовал в рассказе)
+
+БЛОК 2 — ТІЛДІК БІЛІМ (8 баллов):
+Часть 1 — Күрделі сөздер (4 балла): разбей слова по группам:
+бүгін / ауыл-аймақ / қолөнер / АҚШ / кербез сұлу / бел-беу
+(Сөз тіркесі / Қос сөздер / Біріккен сөздер / Қысқарған сөздер)
+
+Часть 2 — Оқшау сөздер (4 балла): расставь знаки:
+«Менің ойымша бұл дұрыс» / «Тыңдаш Жамбыл» / «Алақай келдің»
+
+БЛОК 3 — ЖАЗЫЛЫМ эссе (8 баллов):
+«Қазіргі сән туралы менің ойым» — 6-8 предложений.
+Использовать: шырай (степени), салалас (сложносочинённые), оқшау сөздер.
+
+Итог: максимум 20 баллов. Разбери ошибки, дай рекомендации.`
+  },
+  {
+    day: 18, phase: 3,
+    title: "Финальный день — разбор и уверенность",
+    topic: "Повторение + мотивация",
+    type: "Финальное повторение",
+    time: 30,
+    color: "phase3",
+    goals: ["Разбор самых сложных тем", "Быстрое повторение формул", "Мотивационный финал"],
+    grammar: null,
+    quickReplies: ["Что повторить перед экзаменом?", "Проверь самое важное", "Я готова!"],
+    systemPrompt: `Ты ИИ-репетитор для Аянат, 7 класс. День 18: ФИНАЛЬНЫЙ день перед экзаменом.
+
+Начни тепло: «Аянат, это последний день подготовки! Ты прошла 18 дней, изучила все темы, написала два пробных экзамена. Сегодня — лёгкий финальный обзор и поддержка.»
+
+БЫСТРЫЙ ОБЗОР (10 мин) — спроси что вызывало трудности, затем пройдись по:
+1. ШЫРАЙ: три формы, примеры (1 мин)
+2. КҮРДЕЛІ СӨЗДЕР: 4 типа, по 1 примеру (1 мин)
+3. ОҚШАУ СӨЗДЕР: 3 типа + знаки (1 мин)
+4. ШАҚТАР: формулы прошедшего/будущего (1 мин)
+5. ПОПС формула: 4 фразы начала (1 мин)
+
+МИНИ-ТЕСТ «Последний шанс» — 10 вопросов, быстро:
+Слова / грамматика / понимание / формулы.
+
+ФИНАЛ: Дай советы на экзамен:
+«Читай вопрос медленно», «Если не знаешь слово — пиши по-русски транслитом», «Структура эссе: вступление + 3 абзаца + вывод»
+
+Закончи большим тёплым поздравлением — Аянат прошла весь курс!`
+  }
+];
+
+let apiKey = '';
+let currentDay = 0;
+let doneDays = new Set();
+let chatHistory = [];
+let isLoading = false;
+
+function startApp() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k || !k.startsWith('AIza')) {
+    alert('Пожалуйста, введи корректный ключ Google Gemini (начинается с AIza...)');
+    return;
+  }
+  apiKey = k;
+  localStorage.setItem('aynat_gemini_key', k);
+  const saved = localStorage.getItem('aynat_done');
+  if (saved) doneDays = new Set(JSON.parse(saved));
+  document.getElementById('setup').classList.remove('active');
+  document.getElementById('app').classList.add('active');
+  buildSidebar();
+  selectDay(0);
+}
+
+function buildSidebar() {
+  const list = document.getElementById('dayList');
+  list.innerHTML = '';
+  const phases = [{label:'Фаза 1 — Лексика (дни 1–6)', days:[0,1,2,3,4,5]},{label:'Фаза 2 — Грамматика (дни 7–13)', days:[6,7,8,9,10,11,12]},{label:'Фаза 3 — Экзамен (дни 14–18)', days:[13,14,15,16,17]}];
+  phases.forEach(ph => {
+    const h = document.createElement('div');
+    h.className = 'phase-header';
+    h.textContent = ph.label;
+    list.appendChild(h);
+    ph.days.forEach(i => {
+      const d = PLAN[i];
+      const el = document.createElement('div');
+      el.className = 'day-item' + (doneDays.has(i) ? ' done' : '') + (i === currentDay ? ' active' : '');
+      el.id = 'day-item-' + i;
+      el.onclick = () => selectDay(i);
+      el.innerHTML = `<div class="day-num">${d.day}</div><div class="day-info"><div class="day-title">${d.title}</div><div class="day-type">${d.type}</div></div><div class="day-check"></div>`;
+      list.appendChild(el);
+    });
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((doneDays.size / 18) * 100);
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('daysDoneLabel').textContent = doneDays.size + ' из 18 дней выполнено';
+}
+
+function selectDay(i) {
+  document.querySelectorAll('.day-item').forEach(el => el.classList.remove('active'));
+  const item = document.getElementById('day-item-' + i);
+  if (item) item.classList.add('active');
+  currentDay = i;
+  const d = PLAN[i];
+  const phaseNum = d.phase;
+  document.getElementById('dayBadge').className = 'day-badge badge-phase' + phaseNum;
+  document.getElementById('dayBadge').textContent = 'Фаза ' + phaseNum + ' · День ' + d.day;
+  document.getElementById('dayTitle').textContent = d.title;
+  const cb = document.getElementById('completeBtn');
+  cb.textContent = doneDays.has(i) ? '✓ Выполнено' : '✓ Отметить выполненным';
+  cb.className = 'btn-complete' + (doneDays.has(i) ? ' done' : '');
+  const meta = document.getElementById('dayMeta');
+  meta.innerHTML = `
+    <div class="meta-tag"><div class="meta-dot" style="background:#58a6ff"></div>${d.topic}</div>
+    <div class="meta-tag"><div class="meta-dot" style="background:#3fb950"></div>${d.type}</div>
+    <div class="meta-tag"><div class="meta-dot" style="background:#d29922"></div>${d.time} минут</div>
+    ${d.grammar ? '<div class="meta-tag"><div class="meta-dot" style="background:#bc8cff"></div>Грамматика: ' + d.grammar + '</div>' : ''}
+  `;
+  chatHistory = [];
+  document.getElementById('chatMessages').innerHTML = '';
+  buildQuickReplies(d.quickReplies);
+  if (document.querySelector('.sidebar.open')) toggleSidebar();
+  setTimeout(() => startDayChat(), 100);
+}
+
+function buildQuickReplies(replies) {
+  const wrap = document.getElementById('quickReplies');
+  wrap.innerHTML = '';
+  replies.forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'qr-btn';
+    btn.textContent = r;
+    btn.onclick = () => { document.getElementById('chatInput').value = r; sendMessage(); };
+    wrap.appendChild(btn);
+  });
+}
+
+async function startDayChat() {
+  const d = PLAN[currentDay];
+  const greeting = `Привет! Готова к занятию? Сегодня День ${d.day}: **${d.title}**\n\nТема: ${d.topic}\nЧто будем делать: ${d.goals.join(', ')}\n\nНажми «Начни урок» или напиши что хочешь знать сначала!`;
+  addMessage('ai', greeting);
+}
+
+function addMessage(role, text) {
+  const wrap = document.getElementById('chatMessages');
+  const isAI = role === 'ai';
+  const div = document.createElement('div');
+  div.className = 'msg ' + (isAI ? 'ai' : 'user');
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = isAI ? 'ИИ' : 'А';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.innerHTML = formatText(text);
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  return div;
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>');
+}
+
+function addTyping() {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'typing-msg';
+  div.innerHTML = '<div class="msg-avatar">ИИ</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-msg');
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  if (isLoading) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  addMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  document.getElementById('quickReplies').innerHTML = '';
+  isLoading = true;
+  addTyping();
+  try {
+    const d = PLAN[currentDay];
+    const geminiContents = [
+      { role: 'user', parts: [{ text: d.systemPrompt }] },
+      { role: 'model', parts: [{ text: 'Хорошо, я готова помочь Аянат!' }] },
+      ...chatHistory.map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      }))
+    ];
+    const body = JSON.stringify({
+      contents: geminiContents,
+      generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+    });
+
+    // Try direct Gemini API first, then fallback to CORS proxy
+    let data = null;
+    let lastError = '';
+    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(directUrl)}`;
+
+    for (const url of [directUrl, proxyUrl]) {
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body
+        });
+        data = await resp.json();
+        if (!data.error) break;
+        lastError = data.error.message;
+      } catch (e) {
+        lastError = e.message;
+        continue;
+      }
+    }
+
+    removeTyping();
+    if (!data) {
+      addMessage('ai', `Не удалось подключиться. Попробуй открыть файл через Chrome (не Edge/Safari). Ошибка: ${lastError}`);
+    } else if (data.error) {
+      const msg = data.error.message || '';
+      if (msg.includes('API_KEY') || msg.includes('key')) {
+        addMessage('ai', 'Ключ Gemini не принят. Проверь: ключ должен начинаться с AIza и быть скопирован полностью без пробелов.');
+      } else {
+        addMessage('ai', `Ошибка от Google: ${msg}`);
+      }
+    } else {
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Нет ответа от ИИ.';
+      addMessage('ai', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    }
+  } catch (e) {
+    removeTyping();
+    addMessage('ai', `Ошибка: ${e.message}. Попробуй открыть файл в Chrome и убедись что есть интернет.`);
+  }
+  isLoading = false;
+}
+
+function toggleDone() {
+  if (doneDays.has(currentDay)) {
+    doneDays.delete(currentDay);
+  } else {
+    doneDays.add(currentDay);
+    if (currentDay < 17) {
+      setTimeout(() => addMessage('ai', `Отлично! День ${PLAN[currentDay].day} выполнен! 🎉 Можешь переходить к следующему дню в меню слева.`), 300);
+    } else {
+      setTimeout(() => addMessage('ai', `🏆 Поздравляю, Аянат! Ты прошла все 18 дней подготовки! Ты готова к экзамену. Удачи на СОЧ!`), 300);
+    }
+  }
+  localStorage.setItem('aynat_done', JSON.stringify([...doneDays]));
+  const cb = document.getElementById('completeBtn');
+  cb.textContent = doneDays.has(currentDay) ? '✓ Выполнено' : '✓ Отметить выполненным';
+  cb.className = 'btn-complete' + (doneDays.has(currentDay) ? ' done' : '');
+  const item = document.getElementById('day-item-' + currentDay);
+  if (item) {
+    if (doneDays.has(currentDay)) item.classList.add('done');
+    else item.classList.remove('done');
+  }
+  updateProgress();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('chatInput');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+    });
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  }
+  const saved = localStorage.getItem('aynat_gemini_key');
+  if (saved) document.getElementById('apiKeyInput').value = saved;
+});
+</script>
+</body>
+</html>
