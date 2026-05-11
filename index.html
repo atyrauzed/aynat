@@ -519,9 +519,9 @@ body {
     <div class="logo">Казахский язык · 7 сынып</div>
     <h1 class="setup-title">Привет, Аянат! 👋<br>Твой репетитор готов</h1>
     <p class="setup-subtitle">18-дневная программа подготовки к СОЧ по всем темам. ИИ объясняет по-русски, тренирует казахский.</p>
-    <div class="field-label">API-ключ Google Gemini</div>
-    <input class="api-input" type="password" id="apiKeyInput" placeholder="AIza..." />
-    <p class="api-hint">Получи бесплатно на <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a> → Get API key. Карта не нужна. Ключ хранится только в браузере.</p>
+    <div class="field-label">API-ключ Anthropic (Claude)</div>
+    <input class="api-input" type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." />
+    <p class="api-hint">Твой ключ из <a href="https://platform.claude.com/settings/keys" target="_blank">platform.claude.com</a> → API Keys. Ключ хранится только в браузере.</p>
     <button class="btn-primary" onclick="startApp()">Начать подготовку →</button>
     <div class="setup-features">
       <div class="feat"><div class="feat-dot"></div>18-дневный план по СОР/СОЧ</div>
@@ -1088,12 +1088,12 @@ let isLoading = false;
 
 function startApp() {
   const k = document.getElementById('apiKeyInput').value.trim();
-  if (!k || !k.startsWith('AIza')) {
-    alert('Пожалуйста, введи корректный ключ Google Gemini (начинается с AIza...)');
+  if (!k || !k.startsWith('sk-')) {
+    alert('Пожалуйста, введи корректный ключ Anthropic (начинается с sk-)');
     return;
   }
   apiKey = k;
-  localStorage.setItem('aynat_gemini_key', k);
+  localStorage.setItem('aynat_claude_key', k);
   const saved = localStorage.getItem('aynat_done');
   if (saved) doneDays = new Set(JSON.parse(saved));
   document.getElementById('setup').classList.remove('active');
@@ -1234,53 +1234,28 @@ async function sendMessage() {
   addTyping();
   try {
     const d = PLAN[currentDay];
-    const geminiContents = [
-      { role: 'user', parts: [{ text: d.systemPrompt }] },
-      { role: 'model', parts: [{ text: 'Хорошо, я готова помочь Аянат!' }] },
-      ...chatHistory.map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.content }]
-      }))
-    ];
-    const body = JSON.stringify({
-      contents: geminiContents,
-      generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: d.systemPrompt,
+        messages: chatHistory
+      })
     });
-
-    // Try direct Gemini API first, then fallback to CORS proxy
-    let data = null;
-    let lastError = '';
-    const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(directUrl)}`;
-
-    for (const url of [directUrl, proxyUrl]) {
-      try {
-        const resp = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body
-        });
-        data = await resp.json();
-        if (!data.error) break;
-        lastError = data.error.message;
-      } catch (e) {
-        lastError = e.message;
-        continue;
-      }
-    }
-
+    const data = await response.json();
     removeTyping();
-    if (!data) {
-      addMessage('ai', `Не удалось подключиться. Попробуй открыть файл через Chrome (не Edge/Safari). Ошибка: ${lastError}`);
-    } else if (data.error) {
+    if (data.error) {
       const msg = data.error.message || '';
-      if (msg.includes('API_KEY') || msg.includes('key')) {
-        addMessage('ai', 'Ключ Gemini не принят. Проверь: ключ должен начинаться с AIza и быть скопирован полностью без пробелов.');
-      } else {
-        addMessage('ai', `Ошибка от Google: ${msg}`);
-      }
+      addMessage('ai', `Ошибка API: ${msg}. Проверь ключ на platform.claude.com`);
     } else {
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Нет ответа от ИИ.';
+      const reply = data.content[0].text;
       addMessage('ai', reply);
       chatHistory.push({ role: 'assistant', content: reply });
     }
@@ -1333,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  const saved = localStorage.getItem('aynat_gemini_key');
+  const saved = localStorage.getItem('aynat_claude_key');
   if (saved) document.getElementById('apiKeyInput').value = saved;
 });
 </script>
